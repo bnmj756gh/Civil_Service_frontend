@@ -30,8 +30,8 @@ app.use((req, res, next) => {
 });
 
 glob
-  .sync(path.join(__dirname, 'routes/**/*.+(ts|js)'))
-  .map(filename => require(path.resolve(filename)))
+  .sync('routes/**/*.+(ts|js)', { cwd: __dirname })
+  .map(filename => require(path.resolve(__dirname, filename)))
   .forEach(route => route.default(app));
 
 setupDev(app, developmentMode);
