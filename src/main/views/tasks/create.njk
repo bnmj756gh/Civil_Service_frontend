@@ -1,0 +1,112 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% extends "template.njk" %}
+
+{% block content %}
+  {{ govukBackLink({
+    text: "Back to tasks",
+    href: "/"
+  }) }}
+
+  <h1 class="govuk-heading-xl">Create New Task</h1>
+
+  {% if error %}
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: [
+        {
+          text: error,
+          href: "#title"
+        }
+      ]
+    }) }}
+  {% endif %}
+
+  <form method="POST" action="/tasks">
+    {{ govukInput({
+      label: {
+        text: "Task Title",
+        classes: "govuk-label--m"
+      },
+      hint: {
+        text: "Enter a title for your task"
+      },
+      id: "title",
+      name: "title",
+      value: task.title,
+      classes: "govuk-!-width-two-thirds",
+      errorMessage: {
+        text: "Title is required"
+      } if error and not task.title
+    }) }}
+
+    {{ govukTextarea({
+      label: {
+        text: "Description",
+        classes: "govuk-label--m"
+      },
+      hint: {
+        text: "Provide additional details about the task (optional)"
+      },
+      id: "description",
+      name: "description",
+      value: task.description,
+      rows: 5
+    }) }}
+
+    {% set statusItems = [] %}
+    {% for option in statusOptions %}
+      {% set statusItems = (statusItems.push({
+        value: option.value,
+        text: option.label,
+        selected: (task.status == option.value) or (not task.status and option.value == 'IN_PROGRESS')
+      }), statusItems) %}
+    {% endfor %}
+
+    {{ govukSelect({
+      label: {
+        text: "Status",
+        classes: "govuk-label--m"
+      },
+      hint: {
+        text: "Choose the current status of this task"
+      },
+      id: "status",
+      name: "status",
+      items: statusItems
+    }) }}
+
+    {{ govukInput({
+      label: {
+        text: "Due Date and Time",
+        classes: "govuk-label--m"
+      },
+      hint: {
+        text: "Optional: When should this task be completed? (YYYY-MM-DD HH:MM format)"
+      },
+      id: "dueDateTime",
+      name: "dueDateTime",
+      value: task.dueDateTime,
+      classes: "govuk-!-width-one-half",
+      type: "datetime-local"
+    }) }}
+
+    <div class="govuk-button-group">
+      {{ govukButton({
+        text: "Create Task"
+      }) }}
+
+      {{ govukButton({
+        text: "Cancel",
+        href: "/",
+        classes: "govuk-button--secondary"
+      }) }}
+    </div>
+  </form>
+
+{% endblock %}

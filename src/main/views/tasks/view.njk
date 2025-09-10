@@ -1,0 +1,69 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% extends "template.njk" %}
+
+{% block content %}
+  {{ govukBackLink({
+    text: "Back to tasks",
+    href: "/"
+  }) }}
+
+  {% if success %}
+    {{ govukNotificationBanner({
+      type: "success",
+      html: success
+    }) }}
+  {% endif %}
+
+  {% if error %}
+    {{ govukNotificationBanner({
+      type: "error",
+      html: error
+    }) }}
+  {% endif %}
+
+  {% set statusTag %}
+    {% if task.status == 'IN_PROGRESS' %}
+      {{ govukTag({ text: "In Progress", classes: "govuk-tag--blue" }) }}
+    {% else %}
+      {{ govukTag({ text: "Completed", classes: "govuk-tag--green" }) }}
+    {% endif %}
+  {% endset %}
+
+  {{ govukSummaryList({
+    rows: [
+      {
+        key: {
+          text: "Status"
+        },
+        value: {
+          html: statusTag
+        }
+      },
+      {
+        key: {
+          text: "Description"
+        },
+        value: {
+          text: task.description if task.description else "No description provided"
+        }
+      },
+      {
+        key: {
+          text: "Due Date"
+        },
+        value: {
+          text: task.dueDateTime | date('j F Y \\a\\t g:i a') if task.dueDateTime else "No due date set"
+        }
+      }
+    ]
+  }) }}
+
+  </div>
+
+{% endblock %}

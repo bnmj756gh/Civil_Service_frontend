@@ -1,16 +1,27 @@
 import { Application } from 'express';
-import axios from 'axios';
+import { TaskService } from '../services/taskService';
 
 export default function (app: Application): void {
+  const taskService = new TaskService();
+
   app.get('/', async (req, res) => {
     try {
-      // An example of connecting to the backend (a starting point)
-      const response = await axios.get('http://localhost:4000/api/tasks');
-      console.log(response.data);
-      res.render('home', { "example": response.data });
+      const tasks = await taskService.getAllTasks();
+
+      res.render('tasks/summary', {
+        tasks,
+        statusOptions: taskService.getStatusOptions(),
+        pageTitle: 'Task Summary'
+      });
     } catch (error) {
-      console.error('Error making request:', error);
-      res.render('home', {});
+      console.error('Error fetching tasks:', error);
+      res.render('tasks/summary', {
+        tasks: [],
+        error: error instanceof Error ? error.message : 'Failed to load tasks',
+        statusOptions: taskService.getStatusOptions(),
+        pageTitle: 'Task Summary'
+      });
     }
   });
 }
+

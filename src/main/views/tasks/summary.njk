@@ -1,0 +1,88 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% extends "template.njk" %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">Task Management System</h1>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      {{ govukButton({
+        text: "Create New Task",
+        href: "/tasks/create",
+        classes: "govuk-button--start",
+        isStartButton: true
+      }) }}
+    </div>
+  </div>
+
+  {% if success %}
+    {{ govukNotificationBanner({
+      type: "success",
+      html: success
+    }) }}
+  {% endif %}
+
+  {% if error %}
+    {{ govukNotificationBanner({
+      type: "error",
+      html: error
+    }) }}
+  {% endif %}
+
+
+
+  {% if tasks.length > 0 %}
+    {% set tableRows = [] %}
+    {% for task in tasks %}
+      {% set statusTag %}
+        {% if task.status == 'IN_PROGRESS' %}
+          {{ govukTag({ text: "In Progress", classes: "govuk-tag--blue" }) }}
+        {% else %}
+          {{ govukTag({ text: "Completed", classes: "govuk-tag--green" }) }}
+        {% endif %}
+      {% endset %}
+
+      {% set actions %}
+        <a href="/tasks/{{ task.id }}" class="govuk-link">View</a>
+      {% endset %}
+
+      {% set tableRows = (tableRows.push([
+        { text: task.title },
+        { text: task.description if task.description else "No description" },
+        { html: statusTag },
+        { text: task.dueDateTime | date('j M Y, g:i a') if task.dueDateTime else "No due date" },
+        { html: actions }
+      ]), tableRows) %}
+    {% endfor %}
+
+    {{ govukTable({
+      caption: "Your Tasks",
+      head: [
+        { text: "Title" },
+        { text: "Description" },
+        { text: "Status" },
+        { text: "Due Date" },
+        { text: "Actions" }
+      ],
+      rows: tableRows
+    }) }}
+
+    <p class="govuk-body-s govuk-!-text-align-right">
+      Showing {{ tasks.length }} task{{ 's' if tasks.length != 1 }}
+      {% if currentFilter %} with status "{{ currentFilter }}"{% endif %}
+    </p>
+  {% else %}
+    <div class="govuk-panel govuk-panel--confirmation">
+      <h2 class="govuk-panel__title">No tasks found</h2>
+      <div class="govuk-panel__body">
+      </div>
+    </div>
+  {% endif %}
+
+{% endblock %}
