@@ -79,4 +79,21 @@ export default function (app: Application): void {
     }
   });
 
+  // Update task status
+  app.post('/tasks/:id/status', async (req: Request, res: Response) => {
+    try {
+      const taskId = parseInt(req.params.id);
+      const status = req.body.status as TaskStatus;
+
+      await taskService.updateTaskStatus(taskId, status);
+
+      // Redirect to task details with success message
+      res.redirect(`/tasks/${taskId}?success=Task updated successfully`);
+    } catch (error) {
+      console.error('Error updating task status:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update task status';
+      res.status(400).json({ error: errorMessage });
+    }
+  });
+
 }

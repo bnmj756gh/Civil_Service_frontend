@@ -18,6 +18,10 @@ export interface CreateTaskRequest {
   dueDateTime?: string;
 }
 
+export interface UpdateTaskStatusRequest {
+  status: TaskStatus;
+}
+
 export enum TaskStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED'
@@ -90,6 +94,17 @@ export class TaskService {
       await axios.delete(`${this.baseUrl}/${id}`);
     } catch (error) {
       console.error(`Error deleting task ${id}:`, error);
+      throw this.handleError(error);
+    }
+  }
+
+  async updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
+    try {
+      const statusData: UpdateTaskStatusRequest = { status };
+      const response: AxiosResponse<Task> = await axios.patch(`${this.baseUrl}/${id}/status`, statusData);
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating task ${id} status:`, error);
       throw this.handleError(error);
     }
   }

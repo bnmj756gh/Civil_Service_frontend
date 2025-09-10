@@ -70,6 +70,24 @@
     ]
   }) }}
 
+    <div id="status-change" class="govuk-!-margin-top-6">
+      <h2 class="govuk-heading-m">Change Status</h2>
+
+      <div class="govuk-button-group">
+        {% for option in statusOptions %}
+          {% if option.value != task.status %}
+            <form method="post" action="/tasks/{{ task.id }}/status" style="display: inline;">
+              <input type="hidden" name="status" value="{{ option.value }}">
+              {{ govukButton({
+                text: "Mark as " + option.label,
+                classes: "govuk-button--secondary"
+              }) }}
+            </form>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
   <div class="govuk-!-margin-top-8">
       {{ govukWarningText({
         text: "Deleting a task cannot be undone.",
