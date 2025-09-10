@@ -27,6 +27,12 @@
     }) }}
   {% endif %}
 
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">{{ task.title }}</h1>
+      </div>
+    </div>
+
   {% set statusTag %}
     {% if task.status == 'IN_PROGRESS' %}
       {{ govukTag({ text: "In Progress", classes: "govuk-tag--blue" }) }}
@@ -63,6 +69,20 @@
       }
     ]
   }) }}
+
+  <div class="govuk-!-margin-top-8">
+      {{ govukWarningText({
+        text: "Deleting a task cannot be undone.",
+        iconFallbackText: "Warning"
+      }) }}
+
+      <form method="post" action="/tasks/{{ task.id }}/delete" onsubmit="return confirm('Are you sure you want to delete this task? This action cannot be undone.');">
+        {{ govukButton({
+          text: "Delete Task",
+          classes: "govuk-button--warning"
+        }) }}
+      </form>
+    </div>
 
   </div>
 

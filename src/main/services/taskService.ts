@@ -85,6 +85,15 @@ export class TaskService {
     }
   }
 
+  async deleteTask(id: number): Promise<void> {
+    try {
+      await axios.delete(`${this.baseUrl}/${id}`);
+    } catch (error) {
+      console.error(`Error deleting task ${id}:`, error);
+      throw this.handleError(error);
+    }
+  }
+
   getStatusOptions(): { value: TaskStatus; label: string }[] {
     return [
       { value: TaskStatus.IN_PROGRESS, label: 'In Progress' },

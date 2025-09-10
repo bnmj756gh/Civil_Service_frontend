@@ -62,4 +62,21 @@ export default function (app: Application): void {
     }
   });
 
+// Delete task
+  app.post('/tasks/:id/delete', async (req: Request, res: Response) => {
+    try {
+      const taskId = parseInt(req.params.id);
+      await taskService.deleteTask(taskId);
+
+      // Redirect to dashboard with success message
+      res.redirect('/?success=Task deleted successfully');
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete task';
+
+      // Redirect back with error message
+      res.redirect(`/tasks/${req.params.id}?error=${encodeURIComponent(errorMessage)}`);
+    }
+  });
+
 }
