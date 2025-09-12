@@ -5,7 +5,7 @@ export interface Task {
   id: number;
   title: string;
   description?: string;
-  status: TaskStatus;
+  status: string;
   dueDateTime?: string;
   createdDate: string;
   updatedDate: string;
@@ -14,17 +14,18 @@ export interface Task {
 export interface CreateTaskRequest {
   title: string;
   description?: string;
-  status?: TaskStatus;
+  status: string;
   dueDateTime?: string;
 }
 
 export interface UpdateTaskStatusRequest {
-  status: TaskStatus;
+  status: string;
 }
 
-export enum TaskStatus {
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED'
+export interface TaskStatusOption {
+  id: number;
+  code: string;
+  displayName: string;
 }
 
 export class TaskService {
@@ -78,14 +79,13 @@ export class TaskService {
     }
   }
 
-  getStatusDisplayName(status: TaskStatus): string {
-    switch (status) {
-      case TaskStatus.IN_PROGRESS:
-        return 'In Progress';
-      case TaskStatus.COMPLETED:
-        return 'Completed';
-      default:
-        return status;
+  async getStatusOptions(): Promise<TaskStatusOption[]> {
+    try {
+      const response: AxiosResponse<TaskStatusOption[]> = await axios.get(`${this.baseUrl}/status-options`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching status options:', error);
+      throw this.handleError(error);
     }
   }
 
@@ -98,7 +98,7 @@ export class TaskService {
     }
   }
 
-  async updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
+  async updateTaskStatus(id: number, status: string): Promise<Task> {
     try {
       const statusData: UpdateTaskStatusRequest = { status };
       const response: AxiosResponse<Task> = await axios.patch(`${this.baseUrl}/${id}/status`, statusData);
@@ -109,10 +109,15 @@ export class TaskService {
     }
   }
 
-  getStatusOptions(): { value: TaskStatus; label: string }[] {
-    return [
-      { value: TaskStatus.IN_PROGRESS, label: 'In Progress' },
-      { value: TaskStatus.COMPLETED, label: 'Completed' }
-    ];
+  getStatusDisplayName(status: string, statusOptions: TaskStatusOption[]): string {
+    const option = statusOptions.find(opt => opt.code === status);
+    return option ? option.displayName : status;
+  }
+
+  formatStatusOptionsForSelect(statusOptions: TaskStatusOption[]): { value: string; label: string }[] {
+    return statusOptions.map(option => ({
+      value: option.code,
+      label: option.displayName
+    }));
   }
 }

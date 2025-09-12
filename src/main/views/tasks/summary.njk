@@ -40,12 +40,15 @@
   {% if tasks.length > 0 %}
     {% set tableRows = [] %}
     {% for task in tasks %}
-      {% set statusTag %}
-        {% if task.status == 'IN_PROGRESS' %}
-          {{ govukTag({ text: "In Progress", classes: "govuk-tag--blue" }) }}
-        {% else %}
-          {{ govukTag({ text: "Completed", classes: "govuk-tag--green" }) }}
+      {% set statusDisplayName = "" %}
+      {% for option in statusOptions %}
+        {% if option.value == task.status %}
+          {% set statusDisplayName = option.label %}
         {% endif %}
+      {% endfor %}
+
+      {% set statusTag %}
+        {{ govukTag({ text: statusDisplayName or task.status, classes: "govuk-tag--blue" }) }}
       {% endset %}
 
       {% set actions %}

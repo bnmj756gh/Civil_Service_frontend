@@ -5,23 +5,21 @@ export default function (app: Application): void {
   const taskService = new TaskService();
 
   app.get('/', async (req, res) => {
-    try {
-      const tasks = await taskService.getAllTasks();
+      let tasks: any[] = [];
+      let error: string | undefined;
+
+      // Fetch tasks
+      try {
+        tasks = await taskService.getAllTasks();
+      } catch (taskError) {
+        console.error('Error fetching tasks:', taskError);
+        error =  taskError.message;
+      }
 
       res.render('tasks/summary', {
         tasks,
-        statusOptions: taskService.getStatusOptions(),
-        pageTitle: 'Task Summary'
+        pageTitle: 'Task Summary',
+        error
       });
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-      res.render('tasks/summary', {
-        tasks: [],
-        error: error instanceof Error ? error.message : 'Failed to load tasks',
-        statusOptions: taskService.getStatusOptions(),
-        pageTitle: 'Task Summary'
-      });
-    }
   });
 }
-
