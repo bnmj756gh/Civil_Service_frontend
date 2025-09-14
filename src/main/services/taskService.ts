@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import { HttpError } from '../errors/HttpError';
 // import config from 'config';
 
 export interface Task {
@@ -7,8 +8,6 @@ export interface Task {
   description?: string;
   status: string;
   dueDateTime?: string;
-  createdDate: string;
-  updatedDate: string;
 }
 
 export interface CreateTaskRequest {
@@ -41,7 +40,7 @@ export class TaskService {
       return response.data;
     } catch (error) {
       console.error('Error fetching tasks:', error);
-      throw this.handleError(error);
+      throw HttpError.fromAxiosError(error);
     }
   }
 
@@ -51,7 +50,7 @@ export class TaskService {
       return response.data;
     } catch (error) {
       console.error(`Error fetching task ${id}:`, error);
-      throw this.handleError(error);
+      throw HttpError.fromAxiosError(error);
     }
   }
 
@@ -61,23 +60,10 @@ export class TaskService {
       return response.data;
     } catch (error) {
       console.error('Error creating task:', error);
-      throw this.handleError(error);
+      throw HttpError.fromAxiosError(error);
     }
   }
 
-  private handleError(error: any): Error {
-    if (error.response) {
-      // Server responded with error status
-      const message = error.response.data?.message || error.response.data?.error || 'Server error occurred';
-      return new Error(message);
-    } else if (error.request) {
-      // Network error
-      return new Error('Unable to connect to the task service. Please try again later.');
-    } else {
-      // Request setup error
-      return new Error('An unexpected error occurred. Please try again.');
-    }
-  }
 
   async getStatusOptions(): Promise<TaskStatusOption[]> {
     try {
@@ -85,7 +71,7 @@ export class TaskService {
       return response.data;
     } catch (error) {
       console.error('Error fetching status options:', error);
-      throw this.handleError(error);
+      throw HttpError.fromAxiosError(error);
     }
   }
 
@@ -94,7 +80,7 @@ export class TaskService {
       await axios.delete(`${this.baseUrl}/${id}`);
     } catch (error) {
       console.error(`Error deleting task ${id}:`, error);
-      throw this.handleError(error);
+      throw HttpError.fromAxiosError(error);
     }
   }
 
@@ -105,7 +91,7 @@ export class TaskService {
       return response.data;
     } catch (error) {
       console.error(`Error updating task ${id} status:`, error);
-      throw this.handleError(error);
+      throw HttpError.fromAxiosError(error);
     }
   }
 

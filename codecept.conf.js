@@ -1,13 +1,19 @@
-import { config as testConfig } from './src/test/config.ts';
+// Simple CodeceptJS configuration
 
-const { setHeadlessWhen } = require('@codeceptjs/configure');
-
-setHeadlessWhen(testConfig.TestHeadlessBrowser);
-export const config = {
+exports.config = {
   name: 'functional',
-  gherkin: testConfig.Gherkin,
   output: './functional-output/functional/reports',
-  helpers: testConfig.helpers,
+  helpers: {
+    Playwright: {
+      url: 'https://localhost:3100',
+      show: process.env.TEST_HEADLESS === 'false',
+      browser: 'chromium',
+      waitForTimeout: 10000,
+      waitForAction: 1000,
+      waitForNavigation: 'networkidle0',
+      ignoreHTTPSErrors: true,
+    }
+  },
   tests: './*_test.{js,ts}',
   plugins: {
     allure: {
@@ -15,7 +21,7 @@ export const config = {
       require: '@codeceptjs/allure-legacy',
     },
     pauseOnFail: {
-      enabled: !testConfig.TestHeadlessBrowser,
+      enabled: process.env.TEST_HEADLESS === 'false',
     },
     retryFailedStep: {
       enabled: true,

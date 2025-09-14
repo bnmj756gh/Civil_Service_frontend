@@ -15,9 +15,9 @@
     "test": "npx if-env CI=true && exit 0 || yarn test:unit",
     "test:unit": "jest",
     "test:coverage": "jest --coverage",
-    "test:routes": "jest -c jest.routes.config.js",
+    "test:integration": "jest -c jest.integration.config.js",
     "test:functional": "NODE_TLS_REJECT_UNAUTHORIZED=0 codeceptjs run --steps",
-    "cichecks": "yarn install && yarn build && yarn rebuild puppeteer && yarn lint && yarn test && yarn test:routes && yarn test:a11y",
+    "cichecks": "yarn install && yarn build && yarn rebuild puppeteer && yarn lint && yarn test && yarn test:integration && yarn test:a11y",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -67,6 +67,7 @@
     "@codeceptjs/configure": "^1.0.1",
     "@types/chai-as-promised": "^7.1.5",
     "@types/jest": "^29.5.4",
+    "@types/sinon": "^17.0.4",
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",

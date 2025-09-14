@@ -1,5 +1,6 @@
 import { Application, Request, Response } from 'express';
 import { TaskService, CreateTaskRequest } from '../services/taskService';
+import { HttpError } from '../errors/HttpError';
 
 export default function (app: Application): void {
   const taskService = new TaskService();
@@ -14,8 +15,9 @@ export default function (app: Application): void {
       });
     } catch (error) {
       console.error('Error fetching status options:', error);
+      const statusCode = error instanceof HttpError ? error.statusCode : 500;
       const errorMessage = error instanceof Error ? error.message : 'Failed to load create form';
-      res.render('error', {
+      res.status(statusCode).render('error', {
         pageTitle: 'Error',
         error: errorMessage
       });
@@ -42,7 +44,8 @@ export default function (app: Application): void {
 
         try {
           const statusOptions = await taskService.getStatusOptions();
-          res.render('tasks/create', {
+          const statusCode = error instanceof HttpError ? error.statusCode : 500;
+          res.status(statusCode).render('tasks/create', {
             pageTitle: 'Create New Task',
             statusOptions: taskService.formatStatusOptionsForSelect(statusOptions),
             task: req.body,
@@ -50,7 +53,8 @@ export default function (app: Application): void {
           });
         } catch (statusError) {
           console.error('Error fetching status options for error page:', statusError);
-          res.render('error', {
+          const statusCode = error instanceof HttpError ? error.statusCode : 500;
+          res.status(statusCode).render('error', {
             pageTitle: 'Error',
             error: 'Failed to create task and could not reload form'
           });
@@ -84,7 +88,7 @@ export default function (app: Application): void {
 
       // If no task found, show error page
       if (!task) {
-        res.render('error', {
+        res.status(404).render('error', {
           pageTitle: 'Task Not Found',
           error: error || 'Task not found'
         });
@@ -99,7 +103,8 @@ export default function (app: Application): void {
       });
     } catch (renderError) {
       console.error('Error rendering task details:', renderError);
-      res.render('error', {
+      const statusCode = renderError instanceof HttpError ? renderError.statusCode : 500;
+      res.status(statusCode).render('error', {
         pageTitle: 'Error',
         error: 'Failed to load task details'
       });
@@ -135,8 +140,9 @@ export default function (app: Application): void {
       res.redirect(`/tasks/${taskId}?success=Task updated successfully`);
     } catch (error) {
       console.error('Error updating task status:', error);
+      const statusCode = error instanceof HttpError ? error.statusCode : 500;
       const errorMessage = error instanceof Error ? error.message : 'Failed to update task status';
-      res.status(400).json({ error: errorMessage });
+      res.status(statusCode).json({ error: errorMessage });
     }
   });
 
