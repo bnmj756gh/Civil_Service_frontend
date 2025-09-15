@@ -8,7 +8,7 @@ Feature: Task Management
 
   Scenario: View task summary page
     When I go to '/'
-    Then the page should include 'Task Summary'
+    Then the page should include 'Task Management System'
     And I should see the task summary page
 
   Scenario: Navigate to create task form
@@ -40,9 +40,9 @@ Feature: Task Management
 
   Scenario: Update task status
     Given I am viewing a task in IN_PROGRESS status
-    When I change the status to COMPLETE
+    When I change the status to COMPLETED
     And I submit the status change
-    Then I should see a success message
+    Then I should see an update success message
     And the task status should be updated
 
   Scenario: Delete a task

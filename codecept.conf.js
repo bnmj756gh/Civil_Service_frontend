@@ -15,6 +15,14 @@ exports.config = {
     }
   },
   tests: './*_test.{js,ts}',
+  gherkin: {
+    features: './src/test/functional/features/**/*.feature',
+    steps: [
+      './src/test/steps/common.js',
+      './src/test/steps/task-steps.js',
+      './src/test/steps/error-steps.js'
+    ]
+  },
   plugins: {
     allure: {
       enabled: true,

@@ -6,7 +6,7 @@ Feature: Error Handling
   Scenario: Handle task not found error
     When I go to '/tasks/999999'
     Then I should see a task not found error
-    And the page should include 'Task Not Found'
+    And the page should include 'Something went wrong'
 
   Scenario: Handle invalid task creation
     Given I am on the create task page

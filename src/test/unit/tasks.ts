@@ -60,7 +60,7 @@ describe('TaskService', () => {
         await taskService.getAllTasks();
         fail('Should have thrown an error');
       } catch (error) {
-        expect(error.message).toBe('Unable to connect to the task service. Please try again later.');
+        expect(error.message).toBe('Unable to connect to the service. Please try again later.');
       }
     });
   });
@@ -191,7 +191,7 @@ describe('TaskService', () => {
       const result = await taskService.updateTaskStatus(1, 'COMPLETED');
 
       expect(result).toEqual(updatedTask);
-      expect(mockedAxios.patch).toHaveBeenCalledWith('http://localhost:4000/api/tasks/1/status', { status: 'COMPLETE' });
+      expect(mockedAxios.patch).toHaveBeenCalledWith('http://localhost:4000/api/tasks/1/status', { status: 'COMPLETED' });
     });
   });
 

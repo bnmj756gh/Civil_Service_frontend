@@ -91,9 +91,12 @@
       },
       id: "dueDateTime",
       name: "dueDateTime",
-      value: task.dueDateTime,
+      value: task.dueDateTime if task.dueDateTime else "",
       classes: "govuk-!-width-one-half",
-      type: "datetime-local"
+      type: "datetime-local",
+      attributes: {
+        "data-no-filter": "true"
+      }
     }) }}
 
     <div class="govuk-button-group">
