@@ -1,6 +1,6 @@
 const { I } = inject();
 
-const iAmOnPage = (text) => {
+const iAmOnPage = (text: string): void => {
   const testUrl = 'https://localhost:3100';
   const url = new URL(text, testUrl);
   if (!url.searchParams.has('lng')) {
@@ -11,10 +11,10 @@ const iAmOnPage = (text) => {
 
 Given('I go to {string}', iAmOnPage);
 
-Then('the page URL should be {string}', (url) => {
+Then('the page URL should be {string}', (url: string): void => {
   I.waitInUrl(url);
 });
 
-Then('the page should include {string}', (text) => {
+Then('the page should include {string}', (text: string): void => {
   I.waitForText(text);
 });

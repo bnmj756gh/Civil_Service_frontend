@@ -18,9 +18,9 @@ exports.config = {
   gherkin: {
     features: './src/test/functional/features/**/*.feature',
     steps: [
-      './src/test/steps/common.js',
-      './src/test/steps/task-steps.js',
-      './src/test/steps/error-steps.js'
+      './src/test/steps/common.ts',
+      './src/test/steps/task-steps.ts',
+      './src/test/steps/error-steps.ts'
     ]
   },
   plugins: {
